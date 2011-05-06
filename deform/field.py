@@ -131,12 +131,18 @@ class Field(object):
         self.required = schema.required
         self.children = []
         self.__dict__.update(kw)
-        for child in schema.children:
-            self.children.append(Field(child,
-                                       renderer=renderer,
-                                       counter=self.counter,
-                                       resource_registry=resource_registry,
-                                       **kw))
+        for child in self.schema.children:
+            self.children.append(self._create_child(child, **kw))
+            
+    def _create_child(self, schema, **kw):
+        """
+        Creates a child field for the given schema
+        """
+        return Field(schema,
+                     renderer = self.renderer,
+                     counter = self.counter,
+                     resource_registry = self.resource_registry,
+                     **kw)
 
     def __iter__(self):
         """ Iterate over the children fields of this field. """
